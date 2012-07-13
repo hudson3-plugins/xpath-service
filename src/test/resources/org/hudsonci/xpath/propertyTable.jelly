@@ -1,0 +1,44 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi
+#        
+#
+#************************************************************************** --> 
+
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:x="jelly:xml" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <st:documentation>
+    Dispaly sortable table of properties.
+
+    <st:attribute name="items" use="required">
+      A Map object that gets rendered as a table.
+    </st:attribute>
+  </st:documentation>
+  <table class="pane sortable">
+    <tr>
+      <th class="pane-header" initialSortDir="down">${%Name}</th>
+      <th class="pane-header">${%Value}</th>
+    </tr>
+    <j:forEach var="e" items="${items}">
+      <tr>
+        <td class="pane"><st:out value="${e.key}"/></td>
+        <td class="pane">
+          <j:invokeStatic var="escapedValue" className="hudson.Util" method="escapeString">
+            <j:arg value="${e.value}" />
+          </j:invokeStatic>
+          <j:out value="${escapedValue}"/>
+        </td>
+      </tr>
+    </j:forEach>
+  </table>
+</j:jelly>

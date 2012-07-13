@@ -1,0 +1,47 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#   
+#        
+#
+#************************************************************************** --> 
+
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <l:layout title="${%ZFS file system creation}">
+    <l:header />
+    <l:side-panel />
+    <l:main-panel>
+      <h1>${%ZFS file system creation}</h1>
+      <div>
+        ${%blurb}
+
+        <j:if test="${!it.isRoot()}">
+          <div class="warning">
+            ${%You will need the root password of the system to do this.}
+          </div>
+        </j:if>
+        <ol>
+          <li>${%Restart itself so that the migration can be done without worrying about concurrent data modifications}</li>
+          <li>${%create(it.prospectiveZfsFileSystemName)}</li>
+          <li>${%rename(app.rootDir)}</li>
+          <li>${%mount(app.rootDir)}</li>
+          <li>${%delete(app.rootDir)}</li>
+        </ol>
+
+        <form action="start" method="post">
+          <f:submit value="${%Start migration}" />
+        </form>
+      </div>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

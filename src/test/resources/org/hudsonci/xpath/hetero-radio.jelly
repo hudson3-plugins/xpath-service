@@ -1,0 +1,49 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi
+#        
+#
+#************************************************************************** --> 
+
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:local="local">
+  <st:documentation>
+    Sibling of hetero-list, which only allows the user to pick one type from the list of descriptors and configure it.
+
+    <st:attribute name="field" use="required">
+      Field name in the parent object where databinding happens.
+    </st:attribute>
+    <st:attribute name="descriptors" use="required">
+      all types that the user can add.
+    </st:attribute>
+  </st:documentation>
+
+  <f:prepareDatabinding />
+
+  <table style="width:100%">
+    <j:set var="currentInstance" value="${instance[field]}" />
+    <j:set var="currentDescriptor" value="${currentInstance.descriptor}" />
+    <j:forEach var="d" items="${descriptors}" varStatus="loop">
+      <f:radioBlock name="${field}" help="${d.helpFile}" value="${loop.index}"
+        title="${d.displayName}" checked="${currentDescriptor==d}">
+        <j:set var="descriptor" value="${d}" />
+        <j:set var="instance" value="${currentDescriptor==d?currentInstance:null}" />
+        <st:include from="${d}" page="${d.configPage}" optional="true" />
+
+        <f:invisibleEntry><!-- this tells Stapler which block is for which class -->
+          <input type="hidden" name="stapler-class" value="${d.clazz.name}" />
+        </f:invisibleEntry>
+      </f:radioBlock>
+    </j:forEach>
+  </table>
+</j:jelly>

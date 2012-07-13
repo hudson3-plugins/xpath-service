@@ -1,0 +1,49 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2011 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi, Nikita Levyankov
+#        
+#
+#************************************************************************** --> 
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <st:documentation>
+    Adds @nameRef to all table rows inside this tag, so that when the form is submitted,
+    it gets grouped in one JSON object.
+
+    <st:attribute name="name">
+      if the group head is not available outside, use this attribute to specify the name.
+      @name and @ref are mutually exclusive.
+    </st:attribute>
+    <st:attribute name="ref">
+      id of the thing that serves as the group head, if that's available separately
+    </st:attribute>
+    <st:attribute name="isPropertyOverridden">
+      if present and true - value is overridden
+    </st:attribute>
+  </st:documentation>
+
+  <j:if test="${attrs.isPropertyOverridden==null}">
+    <j:set target="${attrs}" property="isPropertyOverridden" value="false"/>
+  </j:if>
+  <j:choose>
+    <j:when test="${attrs.ref==null and attrs.name==null}">
+      <!-- noop -->
+      <d:invokeBody />
+    </j:when>
+    <j:otherwise>
+      <tr ref="${attrs.ref}" class="row-set-start ${attrs.isPropertyOverridden? 'modified': 'original'}" style="display:none" name="${attrs.name}" />
+      <d:invokeBody />
+      <tr class="row-set-end" />
+    </j:otherwise>
+  </j:choose>
+</j:jelly>

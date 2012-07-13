@@ -1,0 +1,112 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Winston Prakash
+#        
+#
+#************************************************************************** --> 
+
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define">
+  <st:documentation>
+    This tag inside &lt;l:tasks> tag renders the left navigation bar of Hudson.
+    Each &lt;task> tag gets an icon and link.
+
+    <st:attribute name="href" use="required">
+      Link target. Relative to the current page.
+    </st:attribute>
+    <st:attribute name="icon" use="required">
+      URL to the icon, which should be 24x24 in size.
+      It's relative to the context path of Hudson.
+
+      The common values include:
+
+      # "images/24x24/..." then points to the stock icon resources
+      # "plugin/foobar/abc/def.png" that points to "src/main/webapp/abc/def.png" in your plugin resources
+    </st:attribute>
+    <st:attribute name="title" use="required">
+      Human readable text that follows the icon.
+    </st:attribute>
+    <st:attribute name="permission">
+      If specified, the link will be only displayed when the current user
+      has the specified permission against the "it" object.
+
+      This is useful for showing links to restricted pages, as showing
+      them to unprivileged users don't make sense.
+    </st:attribute>
+    <st:attribute name="dialogPanel">
+       The Panel for the dialog
+    </st:attribute>
+  </st:documentation>
+
+  <!--
+    Much of the following horrible code is to implement hierarchy support in <task> tag.
+    The semantics is that when one of the nested <task> matches, the parent is also considered as a match
+    and thus gets a highlight.
+  -->
+  <j:set var="match" value="${h.hyperlinkMatchesCurrentPage(href)}" />
+  <j:scope>
+    <j:set var="taskMatching" value="${context.parent}"/>
+    <d:invokeBody />
+  </j:scope>
+
+    <j:choose>
+        <j:when test="${attrs.onclick != null}">
+            <j:set var="onLinkClick" value="${attrs.onclick}" />
+        </j:when>
+        <j:otherwise>
+            <j:set var="onLinkClick" value="onLinkClick('question'); return false;" />
+        </j:otherwise>
+    </j:choose>
+
+  <j:if test="${attrs.permission==null or h.hasPermission(it,attrs.permission)}">
+    <j:choose>
+      <j:when test="${taskMatching!=null}">
+        <j:if test="${match}">
+          <j:set target="${taskMatching.variables}" property="match" value="true"/>
+        </j:if>
+      </j:when>
+      <j:otherwise>
+        <!--Plug popup dialog script-->
+        <script src="${resURL}/scripts/popup-dialog.js" type="text/javascript" />
+        <div class="task">
+
+          <a href="${href}" onclick="${onLinkClick}">
+            <img width="24" height="24" style="margin: 2px;" alt="" src="${rootURL}${icon.startsWith('images/') ? h.resourcePath : ''}/${icon}"/>
+          </a>
+          <st:nbsp />
+
+          <a href="${href}" onclick="${onLinkClick}">
+            <j:choose>
+              <j:when test="${match}">
+                <b>${title}</b>
+              </j:when>
+              <j:otherwise>
+                ${title}
+              </j:otherwise>
+            </j:choose>
+          </a>
+          
+          <div id="question" style="display:none; cursor: default">
+                <st:include page="${dialogPanel}" />
+          </div>
+
+          <j:if test="${match}">
+            <div class="subtasks">
+              <d:invokeBody />
+            </div>
+          </j:if>
+        </div>
+      </j:otherwise>
+    </j:choose>
+  </j:if>
+</j:jelly>

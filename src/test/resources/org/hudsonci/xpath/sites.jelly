@@ -1,0 +1,61 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#   
+#        
+#
+#************************************************************************** --> 
+
+
+<!--
+  Add/remove update center sites
+-->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+<l:layout title="Update Center" permission="${app.ADMINISTER}" norefresh="true">
+  <st:include page="sidepanel.jelly"/>
+  <l:main-panel>
+    <form method="post" action="updateSources">
+      <local:tabBar page="sites" xmlns:local="/hudson/PluginManager">
+        <tr style="border-top: 0px;">
+          <th colspan="2"/>
+        </tr>
+        <tr style="border-bottom:none">
+          <td colspan="2">
+            <p>
+              This Hudson is configured to receive updates from the following sourcse:
+            </p>
+          </td>
+        </tr>
+        <tr style="border-top: none">
+          <td>
+            <select multiple="true" style="width:100%" name="sources">
+              <j:forEach var="s" items="${app.updateCenter.sources}">
+                <option value="${s.id}">${s.url}</option>
+              </j:forEach>
+            </select>
+          </td>
+          <td id="buttonBar" style="width:13em;">
+            <style>
+              #buttonBar INPUT {
+                width: 10em;
+              }
+            </style>
+            <input type="submit" value="${%Add...}" name="add" />
+            <br />
+            <input type="submit" value="${%Remove}" name="remove" disabled="${empty(app.updateCenter.sources)?'true':null}"/>
+          </td>
+        </tr>
+      </local:tabBar>
+    </form>
+  </l:main-panel>
+</l:layout>
+</j:jelly>

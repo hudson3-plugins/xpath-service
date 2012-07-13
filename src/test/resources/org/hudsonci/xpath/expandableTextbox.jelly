@@ -1,0 +1,75 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi, Seiji Sogabe
+#        
+#
+#************************************************************************** --> 
+
+
+<!--
+  TODO: support @checkUrl
+-->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:d="jelly:define" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
+  <st:documentation>
+    single-line textbox that can be expanded into a multi-line textarea.
+
+    This control is useful for a field that expects multiple whitespaec-separated tokens
+    (such as URLs, glob patterns, etc.) When the user only enters a few tokens,
+    they can keep it as a single line to save space, but to enter a large number of values,
+    this can be turned into textarea for better visibility.
+
+    If the initial value is already multi-line text, the control starts with
+    textarea.
+
+    On the server side, your program is responsible for treating ' ', \t, \r, and \n for
+    separators. (StringTokenizer would do this.)
+
+    <st:attribute name="field">
+      Used for databinding. TBD.
+    </st:attribute>
+    <st:attribute name="name">
+      This becomes @name of the &lt;input> tag.
+      If @field is specified, this value is inferred from it.
+    </st:attribute>
+    <st:attribute name="value">
+      The initial value of the field. This becomes the @value of the &lt;input> tag.
+      If @field is specified, the current property from the "instance" object
+      will be set as the initial value automatically,
+      which is the recommended approach.
+    </st:attribute>
+  </st:documentation>
+  <f:prepareDatabinding />
+  <j:set var="value" value="${attrs.value?:instance[attrs.field]}" />
+  <j:choose>
+    <j:when test="${h.isMultiline(value)}">
+      <!-- multiline text area to begin with -->
+      <f:textarea name='${attrs.name}' value="${value}" field="${attrs.field}"/>
+    </j:when>
+    <j:otherwise>
+      <!-- single line textbox with expand button -->
+      <table border="0" style="width:100%" cellspacing="0" cellpadding="0">
+        <tr>
+          <td width="*">
+            <j:set var="name" value="${attrs.name ?: '_.'+attrs.field}" />
+            <input class="setting-input" type="text"
+                   name="${name}" value="${value}"
+                   id="textarea.${name}" />
+          </td><td width="1">
+            <input type="button" value="&#x25BC;" onclick="expandTextArea(this,'textarea.${name}')"
+                tooltip="${%tooltip}"/>
+          </td>
+        </tr>
+      </table>
+    </j:otherwise>
+  </j:choose>
+</j:jelly>

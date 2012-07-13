@@ -1,0 +1,59 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi, Winston Prakash
+#        
+#************************************************************************** --> 
+
+
+<!--
+  Called from doScript() to display the execution result and the form.
+-->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    
+                
+    <j:if test="${app.scriptSupport == null}">
+        <l:layout norefresh="true">
+            <st:include page="sidepanel.jelly" />
+
+            <l:main-panel>
+                <table style="padding-left: 2em;"  >
+                    <h1>${%Script Console}</h1>
+                        <h2>${app.scriptSupport}</h2>
+                        <h4>No script support plugins installed.</h4>
+                </table>
+            </l:main-panel>
+        </l:layout>
+    </j:if> 
+    
+    
+    <j:if test="${app.scriptSupport != null}">
+        <j:set var="node" value="master" />
+        <st:include from="${app.scriptSupport.descriptor}" page="${app.scriptSupport.descriptor.configPage}"/>
+    </j:if>
+    
+    <!--
+    <j:if test="${size(h.scriptSupportDescriptors) > 0}">
+        <f:dropdownList name="scriptSupport" title="${%Script Type}">
+                    
+            <j:forEach var="descriptor" items="${h.scriptSupportDescriptors}" varStatus="loop">
+                <f:dropdownListBlock title="${descriptor.displayName}" value="${loop.index}"
+                                                     selected="${descriptor==it.scriptSupport.descriptor}"
+                                                     staplerClass="${descriptor.clazz.name}">
+                    <st:include from="${descriptor}" page="${descriptor.configPage}"/>
+                </f:dropdownListBlock>
+            </j:forEach>
+        </f:dropdownList>
+    </j:if>
+    -->
+    
+</j:jelly>

@@ -1,0 +1,58 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi
+#        
+#
+#************************************************************************** --> 
+
+
+<!--
+
+-->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <st:documentation>
+    See
+    http://wiki.hudson-ci.org/display/HUDSON/Jelly+form+controls
+    for the reference.
+
+    <st:attribute name="method" use="required">
+      Server-side method that handles the validation. For example, if this is 'foo', you need "doFoo" on
+      your descriptor class.
+    </st:attribute>
+    <st:attribute name="title" use="required">
+      Caption of the validate button. Should be internationalized.
+    </st:attribute>
+    <st:attribute name="progress">
+      Caption of the text shown while the AJAX call is in progress. For example, "checking..."
+    </st:attribute>
+    <st:attribute name="with">
+      ','-separated list of fields that are sent to the server.
+    </st:attribute>
+    <st:attribute name="checkUrl">
+      User-defined url for AJAX request. Default value is ${rootURL}/descriptor/${descriptor.clazz.name}
+    </st:attribute>
+    <st:attribute name="queryParams">
+      Additional query params for AJAX request
+    </st:attribute>
+  </st:documentation>
+  <f:nested>
+    <div style="float:right">
+      <input type="button" value="${title}" class="yui-button"
+             onclick="validateButton('${checkUrl!=null? checkUrl : rootURL+'/descriptor/'+descriptor.clazz.name}/${method}${queryParams!=null? '?'+queryParams : ''}','${with}',this)" />
+    </div>
+    <div style="display:none;">
+      <img src="${imagesURL}/spinner.gif" /> ${attrs.progress}
+    </div>
+    <div><!-- this is where the error message goes --></div>
+  </f:nested>
+</j:jelly>

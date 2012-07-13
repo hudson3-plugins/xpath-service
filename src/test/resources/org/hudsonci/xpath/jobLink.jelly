@@ -1,0 +1,29 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi
+#        
+#
+#************************************************************************** --> 
+
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <st:documentation>
+    Generates a link to a job.
+    <st:attribute name="job" type="hudson.model.Job" use="required">
+      Job object to be displayed.
+    </st:attribute>
+  </st:documentation>
+
+<img src="${imagesURL}/16x16/${job.buildStatusUrl}" alt="${job.iconColor.description}"/>
+<a href="${h.getRelativeLinkTo(job)}">${job.displayName}</a>
+</j:jelly>

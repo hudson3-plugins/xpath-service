@@ -1,0 +1,48 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi
+#        
+#
+#************************************************************************** --> 
+
+
+<!--
+  If the tag is used during the full HTML page generation, <ajax> tag becomes
+  no-op and simply invokes its body.
+
+  If the page is used as a top-level tag, it sets up the environment
+  for generating partial HTML contents (which can be then injected into the existing
+  page via client-side script.)
+
+  See MatrixProject/index.jelly and ajaxMatrix.jelly for how to use this tag.
+-->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:s="/lib/form" xmlns:p="/lib/hudson/project">
+  <j:choose>
+    <j:when test="${rootURL!=null}">
+      <!-- no envelope needed, since this is called during full HTML rendering. -->
+      <d:invokeBody/>
+    </j:when>
+    <j:otherwise>
+      <!-- called to generate partial HTML. set up HTML headers and etc -->
+      <!-- copied from layout.jelly -->
+      <st:contentType value="text/html;charset=UTF-8" />
+      <j:set var="rootURL" value="${request.contextPath}" />
+      <j:new var="h" className="hudson.Functions" /><!-- instead of JSP functions -->
+      <j:set var="resURL"  value="${rootURL}${h.resourcePath}" />
+      <j:set var="imagesURL"  value="${rootURL}${h.resourcePath}/images" />
+      <j:set var="ajax" value="true"/>
+      
+      <d:invokeBody/>
+    </j:otherwise>
+  </j:choose>
+</j:jelly>

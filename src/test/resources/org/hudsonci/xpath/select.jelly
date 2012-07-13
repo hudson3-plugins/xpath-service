@@ -1,0 +1,51 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2010 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi, Bruce Chapman, Alan Harder, CloudBees, Inc.
+#        
+#
+#************************************************************************** --> 
+
+
+<!-- Tomcat doesn't like us using the attribute called 'class' -->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <st:documentation>
+    Glorified &lt;select> control that supports the data binding and AJAX updates.
+    Your descriptor should have the 'doFillXyzItems' method, which returns a ListBoxModel
+    representation of the items in your drop-down list box, and your instance field should
+    hold the current value.
+
+    <st:attribute name="clazz">
+      Additional CSS classes that the control gets.
+    </st:attribute>
+    <st:attribute name="field">
+      Used for databinding.
+    </st:attribute>
+    <st:attribute name="default">
+      The default value of the text box, in case both @value is and 'instance[field]' is null.
+    </st:attribute>
+  </st:documentation>
+
+  <f:prepareDatabinding/>
+
+  ${descriptor.calcFillSettings(field,attrs)} <!-- this figures out the 'fillUrl' and 'fillDependsOn' attribute -->
+  <j:set var="value" value="${attrs.value ?: instance[attrs.field] ?: attrs.default}" />
+  <m:select xmlns:m="jelly:hudson.util.jelly.MorphTagLibrary"
+         class="setting-input ${attrs.checkUrl!=null?'validated':''} select ${attrs.clazz}"
+         name="${attrs.name ?: '_.'+attrs.field}"
+         value="${value}"
+         ATTRIBUTES="${attrs}" EXCEPT="field clazz">
+    <j:if test="${value!=null}">
+      <option value="${value}">${value}</option>
+    </j:if>
+  </m:select>
+</j:jelly>

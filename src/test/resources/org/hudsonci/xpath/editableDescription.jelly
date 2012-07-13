@@ -1,0 +1,49 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi, Tom Huybrechts, Yahoo! Inc.
+#        
+#
+#************************************************************************** --> 
+
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <st:documentation>
+    Renders ${it.description} and then allow it to be editable in place,
+    if the current user has the specified permission.
+
+    <st:attribute name="permission" use="required">
+      If the current user doesn't have this permission, the description
+      is not editable.
+    </st:attribute>
+  </st:documentation>
+
+  <div id="description">
+    <div>
+      <j:out value="${it.description!=null ? app.markupFormatter.translate(it.description) : ''}" />
+    </div>
+
+    <l:hasPermission permission="${permission}">
+      <div align="right"><a href="editDescription" onclick="${h.isAutoRefresh(request) ? null : 'return replaceDescription();'}">
+        <img src="${imagesURL}/16x16/notepad.png" alt="" />
+        <j:choose>
+          <j:when test="${empty(it.description)}">
+            ${%add description}
+          </j:when>
+          <j:otherwise>
+            ${%edit description}
+          </j:otherwise>
+        </j:choose>
+      </a></div>
+    </l:hasPermission>
+  </div>
+</j:jelly>

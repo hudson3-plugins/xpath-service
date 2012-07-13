@@ -1,0 +1,37 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi, Martin Eigenbrodt
+#        
+#
+#************************************************************************** --> 
+
+
+<!--
+
+  Attributes:
+    @job : job to draw
+    @indenter
+-->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:x="jelly:xml" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <j:set var="lsBuild" value="${job.lastSuccessfulBuild}"/>
+  <j:set var="lfBuild" value="${job.lastFailedBuild}"/>
+  <tr class="${job.disabled?'disabledJob':null}">
+      <j:forEach var="col" items="${columnExtensions}">
+          <st:include page="column.jelly" it="${col}" />
+      </j:forEach>
+      <td>
+          <st:nbsp/>
+      </td>
+  </tr>
+</j:jelly>

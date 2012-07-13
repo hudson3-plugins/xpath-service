@@ -1,0 +1,80 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2011 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors:
+#
+#    Nikita Levyankov
+#
+#
+#************************************************************************** -->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+    <script type="text/javascript">
+         function onDeleteClick() {
+            jQuery.ajax({
+                url: "${rootURL}/${it.url}api/json",
+                dataType: 'json',
+                cache: false,
+                success: function(data) {
+                    jQuery('#confirmDialog').show();
+                    jQuery('#buildInProgressDialog').hide();
+                    jQuery('#cascadingChildrenPresentDiald').hide();
+                    var cascadingChildren = data.cascadingChildrenNames;
+                    if (cascadingChildren.length != 0) {
+                        var jobList = jQuery("#jobList");
+                        jobList.html("");
+                        cascadingChildren.sort();
+                        for (var i = 0; i &lt; cascadingChildren.length; i++) {
+                            jobList.append("<li>" + cascadingChildren[i] + "</li>");
+                        }
+                        jQuery('#confirmDialog').hide();
+                        jQuery('#buildInProgressDialog').hide();
+                        jQuery('#cascadingChildrenPresentDiald').show();
+                    } else{
+                        if(data.lastBuild.length != 0){
+                           var lastBuildUrl = data.lastBuild.url + "api/json";
+                           jQuery.ajax({
+                               url: lastBuildUrl,
+                               dataType: 'json',
+                               cache: false,
+                               success: function(buildData) {
+                                   if(buildData.building){
+                                      jQuery('#confirmDialog').hide();
+                                      jQuery('#cascadingChildrenPresentDiald').hide();
+                                      jQuery('#buildInProgressDialog').show();
+                                   }
+                               }
+                           });
+                        }
+                    }
+                }
+            });
+            onLinkClick("question");
+        }
+    </script>
+    <div>
+        <form method="post" action="doDelete" id="deleteForm">
+            <div id="confirmDialog">
+                <h4>${%deleteMsg}</h4>
+                <input type="submit" class="yes" value="${%Yes}"/>
+                <input type="button" class="no" value="${%No}"/>
+            </div>
+            <div id="cascadingChildrenPresentDiald" class="deleteJobDialog" style="display:none">
+                <h4>${%cannotDeleteBecauseOfChildrenMsg}</h4>
+                <ul id="jobList">
+                </ul>
+                <input type="button" class="no" value="${%Ok}" />
+            </div>
+            <div id="buildInProgressDialog" class="deleteJobDialog" style="display:none">
+                <h4>${%cannotDeleteBecauseBuildInProgressMsg}</h4>
+                <input type="button" class="no" value="${%Ok}" />
+            </div>
+        </form>
+    </div>
+</j:jelly>

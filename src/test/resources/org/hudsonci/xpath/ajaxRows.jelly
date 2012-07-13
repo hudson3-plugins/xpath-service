@@ -1,0 +1,36 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi
+#        
+#
+#************************************************************************** --> 
+
+
+<!--
+  Used to render the folder content through an AJAX call.
+-->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+  <l:ajax>
+    <t:setIconSize/>
+    <table><!-- throw away table tag to group rows together -->
+      <j:set var="depth" value="${request.getParameter('depth')}" />
+      <j:set var="indenter" value="${it.createFixedIndenter(depth)}" />
+      <j:forEach var="v" items="${it.views}">
+        <t:projectViewNested />
+      </j:forEach>
+      <j:forEach var="job" items="${it.items}">
+        <t:projectViewRow jobBaseUrl="${rootURL}/${it.url}" />
+      </j:forEach>
+    </table>
+  </l:ajax>
+</j:jelly>

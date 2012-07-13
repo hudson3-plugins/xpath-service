@@ -1,0 +1,49 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi
+#        
+#
+#************************************************************************** --> 
+
+
+<!--
+  Link to a build. Used by fingerprint/index.jsp
+
+  Attributes:
+    jobName    name of the job. Can be omitted if you don't want to show a name.
+    job        A 'job' object. Can be omitted if you don't want to link.
+    number     build number to link to.
+    href       Link target. If missing, the top page of the build.
+-->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <j:set var="jobName_" value="${h.appendSpaceIfNotNull(jobName)}"/>
+  <j:choose>
+	  <j:when test="${job==null}">
+	    ${jobName_}#<!-- -->${number}
+	  </j:when>
+	  <j:otherwise>
+	    <j:set var="r" value="${job.getBuildByNumber(number)}" />
+	    <j:choose>
+	      <j:when test="${r==null}">
+	        <a href="${rootURL}/${job.url}">${jobName}</a>
+          #<!-- -->${number}
+	      </j:when>
+	      <j:otherwise>
+	        <a href="${attrs.href ?: rootURL+'/'+r.url}">
+	          <img src="${imagesURL}/16x16/${r.buildStatusUrl}"
+                 alt="${r.iconColor.description}"/>${jobName_}#<!-- -->${number}</a>
+	      </j:otherwise>
+	    </j:choose>
+	  </j:otherwise>
+	</j:choose>
+</j:jelly>

@@ -1,0 +1,73 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2010 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi, Yahoo! Inc.
+#        
+#
+#************************************************************************** --> 
+
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:f="/lib/form">
+  <st:documentation>
+    Generates an input field <tt>&lt;input type="text" ... /></tt> to be
+    used inside &lt;f:entry/>
+
+    <st:attribute name="field">
+      Used for databinding. TBD.
+    </st:attribute>
+    <st:attribute name="name">
+      This becomes @name of the &lt;input> tag.
+      If @field is specified, this value is inferred from it.
+    </st:attribute>
+    <st:attribute name="value">
+      The initial value of the field. This becomes the @value of the &lt;input> tag.
+      If @field is specified, the current property from the "instance" object
+      will be set as the initial value automatically,
+      which is the recommended approach.
+    </st:attribute>
+    <st:attribute name="default">
+      The default value of the text box, in case both @value is and 'instance[field]' is null.
+    </st:attribute>
+    <!-- Tomcat doesn't like us using the attribute called 'class' -->
+    <st:attribute name="clazz">
+      Additional CSS class(es) to add (such as client-side validation clazz="required",
+      "number" or "positive-number"; these may be combined, as clazz="required number").
+    </st:attribute>
+    <st:attribute name="checkMessage">
+      Override the default error message when client-side validation fails,
+      as with clazz="required", etc.
+    </st:attribute>
+    <st:attribute name="checkUrl">
+      If specified, the value entered in this input field will be checked (via AJAX)
+      against this URL, and errors will be rendered under the text field.
+
+      If @field is specified, this will be inferred automatically,
+      which is the recommended approach.
+    </st:attribute>
+    <st:attribute name="autoCompleteDelimChar">
+      A single character that can be used as a delimiter for autocompletion. Normal
+      autocomplete will replace the entire content of the text box with the autocomplete
+      selection. With this attribute set, the selection will be appended with the
+      delimiter to the existing value of the text box.
+    </st:attribute>
+  </st:documentation>
+  <f:prepareDatabinding />
+  ${descriptor.calcAutoCompleteSettings(field,attrs)} <!-- this figures out the 'autoCompleteUrl' attribute -->
+
+  <!-- mostly pass-through all the attributes -->
+  <m:input xmlns:m="jelly:hudson.util.jelly.MorphTagLibrary"
+         class="setting-input ${attrs.checkUrl!=null?'validated':''} ${attrs.autoCompleteUrl!=null?'auto-complete':null} ${attrs.clazz}"
+         name="${attrs.name ?: '_.'+attrs.field}"
+         value="${attrs.value ?: instance[attrs.field] ?: attrs.default}"
+         type="text"
+         ATTRIBUTES="${attrs}" EXCEPT="field clazz" />
+</j:jelly>

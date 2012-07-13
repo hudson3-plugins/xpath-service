@@ -1,0 +1,98 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2010 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi, Nikita Levyankov, Anton Kozak
+#        
+#
+#************************************************************************** --> 
+
+
+<!--
+  Parts of the configuration that applies to Project and MavenModuleSet.
+-->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:p="/lib/hudson/project" xmlns:this="this">
+    <p:config-disableBuild/>
+
+    <j:set var="concurrentBuildProperty" value="${cu.getBooleanProperty(it, it.CONCURRENT_BUILD_PROPERTY_NAME)}"/>
+    <j:set var="concurrentBuild" value="${concurrentBuildProperty.getValue()}"/>
+
+    <j:if test="${app.CONCURRENT_BUILD}">
+        <f:optionalBlock field="concurrentBuild" title="${%title.concurrentbuilds}"
+        		   checked="${concurrentBuild}"
+                   resetUrl="${jobUrl}/resetProjectProperty?propertyName=${it.CONCURRENT_BUILD_PROPERTY_NAME}"
+                   isPropertyOverridden="${concurrentBuildProperty.isOverridden()}"/>
+    </j:if>
+    <j:set var="jdks" value="${app.JDKs}"/>
+    <j:if test="${jdks.size() gt 1}">
+        <!-- if there's only one JDK configured, always use that. -->
+        <f:entry title="JDK"
+                 description="${%JDK to be used for this project}"
+                 isPropertyOverridden="${cu.getStringProjectProperty(it, it.JDK_PROPERTY_NAME).isOverridden()}">
+            <select class="setting-input validated" name="jdk"
+                    checkUrl="'${rootURL}/defaultJDKCheck?value='+this.value">
+                <option>${%default.value}</option>
+                <j:forEach var="inst" items="${jdks}">
+                    <f:option selected="${inst.name==it.getJDKName()}" value="${inst.name}">${inst.name}</f:option>
+                </j:forEach>
+            </select>
+        </f:entry>
+    </j:if>
+
+    <!-- master/slave -->
+    <j:set var="nodeChooserProperty" value="${cu.getBaseProjectProperty(it, it.APPOINTED_NODE_PROPERTY_NAME)}"/>
+    <j:set var="isNodeOverridden" value="${nodeChooserProperty.isOverridden()}" />
+    <j:if test="${app.labels.size() gt 1 || app.clouds.size() gt 0 || (it.assignedLabel!=null and it.assignedLabel!=app.selfLabel)}">
+        <f:optionalBlock name="${it.APPOINTED_NODE_PROPERTY_NAME}" title="${%Restrict where this project can be run}"
+                         checked="${it.assignedLabel!=null}"
+                         isPropertyOverridden="${isNodeOverridden}"
+                         resetUrl="${jobUrl}/resetProjectProperty?propertyName=${it.APPOINTED_NODE_PROPERTY_NAME}"
+                         help="/help/project-config/slave.html">
+            <f:radioBlock name="${it.AFFINITY_CHO0SER_KEY}" value="${it.BASIC_KEY}" title="${%Node and label menu}"
+                          checked="${!it.advancedAffinityChooser and it.assignedLabel!=null}"
+                          isPropertyOverridden="${isNodeOverridden}">
+                <f:entry title="${%Node}" isPropertyOverridden="${isNodeOverridden}">
+                    <select class="setting-input" name="${it.SLAVE_KEY}">
+                        <j:forEach var="s" items="${app.labels}">
+                            <j:if test="${s.isAssignable()}">
+                                <f:option selected="${s==it.assignedLabel}" value="${s.name}">${s.name}
+                                    <j:if test="${!empty(s.description)}">(${s.description})</j:if>
+                                </f:option>
+                            </j:if>
+                        </j:forEach>
+                    </select>
+                </f:entry>
+            </f:radioBlock>
+            <f:radioBlock name="${it.AFFINITY_CHO0SER_KEY}" value="advanced" title="${%Advanced Node and Label expressions}"
+                          checked="${it.advancedAffinityChooser and it.assignedLabel!=null}"
+                          isPropertyOverridden="${isNodeOverridden}">
+                <f:entry title="${%Label Expression}" field="assignedLabelString"
+                         isPropertyOverridden="${isNodeOverridden}">
+                    <f:textbox/>
+                </f:entry>
+            </f:radioBlock>
+        </f:optionalBlock>
+    </j:if>
+
+    <f:section title="${%Advanced Project Options configure-common}">
+        <f:advanced>
+            <p:config-quietPeriod/>
+            <p:config-retryCount/>
+            <p:config-blockWhenUpstreamBuilding/>
+            <p:config-blockWhenDownstreamBuilding/>
+            <st:include page="configure-advanced.jelly" optional="true"/>
+            <p:config-cleanWorkspace/>
+        </f:advanced>
+    </f:section>
+
+    <this:configure-scm/>
+</j:jelly>

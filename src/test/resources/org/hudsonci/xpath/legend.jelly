@@ -1,0 +1,80 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2010 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi, Seiji Sogabe,
+#        
+#
+#************************************************************************** --> 
+
+
+<!-- show the icon legend -->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:s="/lib/form">
+  <l:layout>
+    <st:include page="sidepanel.jelly" />
+    <l:main-panel>
+      <table cellpadding="5">
+        <tr><td>
+          <img src="images/48x48/grey.png" alt=""/>
+          ${%grey}
+        </td></tr>
+        <tr><td>
+          <img src="images/48x48/grey_anime.gif" alt=""/>
+          ${%grey_anime}
+        </td></tr>
+        <tr><td>
+          <img src="images/48x48/blue.png" alt=""/>
+          ${%blue}
+        </td></tr>
+        <tr><td>
+          <img src="images/48x48/blue_anime.gif" alt=""/>
+          ${%blue_anime}
+        </td></tr>
+        <tr><td>
+          <img src="images/48x48/yellow.png" alt=""/>
+          ${%yellow}
+        </td></tr>
+        <tr><td>
+          <img src="images/48x48/yellow_anime.gif" alt=""/>
+          ${%yellow_anime}
+        </td></tr>
+        <tr><td>
+          <img src="images/48x48/red.png" alt=""/>
+          ${%red}
+        </td></tr>
+        <tr><td>
+          <img src="images/48x48/red_anime.gif" alt=""/>
+          ${%red_anime}
+        </td></tr>
+        <tr><td>
+          <img src="images/48x48/health-80plus.png" alt=""/>
+          ${%health-81plus}
+        </td></tr>
+        <tr><td>
+          <img src="images/48x48/health-60to79.png" alt=""/>
+          ${%health-61to80}
+        </td></tr>
+        <tr><td>
+          <img src="images/48x48/health-40to59.png" alt=""/>
+          ${%health-41to60}
+        </td></tr>
+        <tr><td>
+          <img src="images/48x48/health-20to39.png" alt=""/>
+          ${%health-21to40}
+        </td></tr>
+        <tr><td>
+          <img src="images/48x48/health-00to19.png" alt=""/>
+          ${%health-00to20}
+        </td></tr>
+      </table>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

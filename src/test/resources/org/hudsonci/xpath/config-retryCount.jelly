@@ -1,0 +1,32 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2011 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Shinod, Nikita Levyankov, Anton Kozak
+#        
+#
+#************************************************************************** --> 
+
+
+<!-- custom retry count -->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <j:set var="scmCheckoutRetryCountProperty" value="${cu.getIntegerProjectProperty(it, it.SCM_CHECKOUT_RETRY_COUNT_PROPERTY_NAME)}"/>
+  <j:set var="scmCheckoutRetryCount" value="${scmCheckoutRetryCountProperty.getValue()}"/>
+  <f:optionalBlock name="hasScmCheckoutRetryCount" title="${%Retry Count}"
+                   checked="${scmCheckoutRetryCount!=null and scmCheckoutRetryCount!=scmCheckoutRetryCountProperty.getDefaultValue()}"
+                   isPropertyOverridden="${scmCheckoutRetryCountProperty.isOverridden()}"
+                   resetUrl="${jobUrl}/resetProjectProperty?propertyName=${it.SCM_CHECKOUT_RETRY_COUNT_PROPERTY_NAME}"
+                   help="/help/project-config/scmCheckoutRetryCount.html">
+    <f:entry title="${%SCM checkout retry count}" isPropertyOverridden="${scmCheckoutRetryCountProperty.isOverridden()}">
+      <f:textbox name="scmCheckoutRetryCount" value="${scmCheckoutRetryCount}"/>
+    </f:entry>
+  </f:optionalBlock>
+</j:jelly>

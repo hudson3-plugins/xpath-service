@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <children>
+    <bool>true</bool>
+    <num>2.0</num>
+    <child id="bar">
+      <set var="a" value="1"/>
+      <set var="b" value="2"/>
+      <set var="c">3</set>
+    </child>
+    <child id="baz">
+      <set var="a" value="4"/>
+      <set var="b" value="5"/>
+      <set var="c">5</set>
+    </child>
+  </children>
+</root>

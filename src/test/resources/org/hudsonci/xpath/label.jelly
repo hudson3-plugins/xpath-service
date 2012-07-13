@@ -1,0 +1,27 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#   
+#        
+#
+#************************************************************************** --> 
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
+    <st:documentation>
+        Puts the input field for allowing an user to limit this installer to a certain label.
+        Meant to be used from config.jelly of ToolInstaller subypes. 
+    </st:documentation>
+    <f:entry title="${%Label}" field="label" help="/help/tools/help-label.html">
+        <!-- XXX could use Hudson.getLabels and make a combo box -->
+        <f:textbox/>
+    </f:entry>
+</j:jelly>

@@ -1,0 +1,30 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi
+#        
+#
+#************************************************************************** --> 
+
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:s="jelly:stapler" xmlns:d="jelly:define">
+  <s:documentation>
+    Header portion of the HTML page, that gets rendered into the &lt;head> tag.
+    Multiple &lt;l:header> elements can be specified, and can even come after
+    &lt;l:main-panel>.
+
+    This tag can be placed inside &lt;l:layout>.
+  </s:documentation>
+  <j:if test="${mode=='header'}">
+    <d:invokeBody />
+  </j:if>
+</j:jelly>

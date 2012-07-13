@@ -1,0 +1,36 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2010 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi
+#        
+#
+#************************************************************************** --> 
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:d="jelly:define" xmlns:st="jelly:stapler">
+  <st:documentation>
+    &lt;option> tag for the &lt;select> element that takes true/false for selected.
+
+    <st:attribute name="value">
+      The value to be sent when the form is submitted.
+      If omitted, the body of the tag will be placed in the value attribute as well
+      (due to the browser incompatibility between IE and Firefox, value attribute
+       must be included).
+    </st:attribute>
+    <st:attribute name="selected" type="boolean">
+      If true, the option value appears as selected.
+    </st:attribute>
+  </st:documentation>
+  <!-- No escape/encode to avoid double-encoding if used in value attribute below -->
+  <j:set var="optionBody" encode="false"><d:invokeBody escapeText="false"/></j:set>
+  <option value="${attrs.value!=null?attrs.value:h.xmlUnescape(optionBody)}"
+          selected="${attrs.selected?'true':null}"><j:out value="${optionBody}"/></option>
+</j:jelly>

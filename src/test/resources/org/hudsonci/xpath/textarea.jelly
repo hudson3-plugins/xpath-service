@@ -1,0 +1,60 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2010 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi, Johnathon Jamison, Yahoo! Inc.
+#        
+#
+#************************************************************************** --> 
+
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
+  <st:documentation>
+    &lt;textarea> tag on steroids.
+    The textarea will be rendered to fit the content. It also gets the resize handle.
+
+    <st:attribute name="field">
+      Used for databinding. TBD.
+    </st:attribute>
+    <st:attribute name="name">
+      This becomes @name of the &lt;textarea> tag.
+      If @field is specified, this value is inferred from it.
+    </st:attribute>
+    <st:attribute name="value">
+      The initial value of the field. This becomes the value of the &lt;textarea> tag.
+      If @field is specified, the current property from the "instance" object
+      will be set as the initial value automatically,
+      which is the recommended approach.
+    </st:attribute>
+    <st:attribute name="default">
+      The default value of the text box, in case both @value is and 'instance[field]' is null.
+    </st:attribute>
+    <st:attribute name="checkUrl">
+      If specified, the value entered in this input field will be checked (via AJAX)
+      against this URL, and errors will be rendered under the text field.
+
+      If @field is specified, this will be inferred automatically,
+      which is the recommended approach.
+    </st:attribute>
+  </st:documentation>
+
+  <f:prepareDatabinding />
+  <j:set var="value" value="${attrs.value ?: instance[attrs.field] ?: attrs.default}" />
+  <textarea id="${attrs.id}" style="${attrs.style}"
+            name ="${attrs.name ?: '_.'+attrs.field}"
+            class="setting-input ${attrs.checkUrl!=null?'validated':''} ${attrs.class}"
+            checkUrl="${attrs.checkUrl}"
+            rows="${h.determineRows(value)}">
+    <st:out value="${value}" />
+  </textarea>
+  <!-- resize handle -->
+  <div class="textarea-handle"/>
+</j:jelly>

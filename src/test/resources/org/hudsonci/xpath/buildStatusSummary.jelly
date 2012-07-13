@@ -1,0 +1,29 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi, Simon Wiest
+#        
+#
+#************************************************************************** --> 
+
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core">
+    <j:set var="summary" value="${build.buildStatusSummary}"/>
+    <j:choose>
+        <j:when test="${summary.isWorse}">
+          <font color='red'><j:out value="${app.markupFormatter.translate(summary.message)}"/></font>
+        </j:when>
+        <j:otherwise>
+          <j:out value="${app.markupFormatter.translate(summary.message)}"/>
+        </j:otherwise>
+    </j:choose>
+</j:jelly>

@@ -1,0 +1,68 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi, Seiji Sogabe
+#        
+#
+#************************************************************************** --> 
+
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+  <st:documentation>
+    Creates a table of builds.
+    <st:attribute name="builds" use="required">
+      A collection of builds to be displayed.
+    </st:attribute>
+    <st:attribute name="jobBaseUrl" use="required">
+      The base URL of all job/build links. Normally ${rootURL}/
+    </st:attribute>
+  </st:documentation>
+
+  <t:setIconSize/>
+  <table class="sortable pane bigtable" id="projectStatus">
+    <tr>
+      <th><st:nbsp/></th>
+      <th>${%Build}</th>
+      <th initialSortDir="up">${%Date}</th>
+      <th>${%Status}</th>
+      <th><st:nbsp/></th>
+    </tr>
+    <!-- TODO: support gradual expansion of the list -->
+    <j:forEach var="b" items="${h.subList(attrs.builds,50)}">
+      <tr>
+        <td data="${b.iconColor.ordinal()}">
+          <a href="${jobBaseUrl}${b.url}">
+            <img src="${imagesURL}/${iconSize}/${b.buildStatusUrl}"
+                 alt="${b.iconColor.description}"/>
+          </a>
+        </td>
+        <td>
+          <a href="${jobBaseUrl}${b.parent.url}">${b.parent.fullDisplayName}</a>
+          <st:nbsp/>
+          <a href="${jobBaseUrl}${b.url}">${b.displayName}</a>
+        </td>
+        <td data="${b.timestampString2}">
+          ${b.timestampString}
+        </td>
+        <td>
+          <t:buildStatusSummary build="${b}" />
+        </td>
+        <td>
+          <a href="${jobBaseUrl}${b.url}console">
+            <img src="${imagesURL}/${subIconSize}/terminal.png" title="${%Console output}" alt="${%Console output}" border="0" />
+          </a>
+        </td>
+      </tr>
+    </j:forEach>
+  </table>
+  <t:rssBar-with-iconSize/>
+</j:jelly>

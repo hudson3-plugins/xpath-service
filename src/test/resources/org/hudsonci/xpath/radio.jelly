@@ -1,0 +1,25 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi
+#        
+#
+#************************************************************************** --> 
+
+
+<!--
+	<input type="radio"> tag that takes true/false for @checked.
+
+	Note that safari doesn't support onchange.
+-->
+<?jelly escape-by-default='true'?>
+<input type="radio" name="${attrs.name}" onclick="${attrs.onclick}" id="${attrs.id}" value="${attrs.value}"
+        checked="${attrs.checked?'true':null}"/>

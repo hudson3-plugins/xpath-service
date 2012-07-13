@@ -1,0 +1,38 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi, Seiji Sogabe
+#        
+#
+#************************************************************************** --> 
+
+
+<!--
+  Thread dump
+
+  TODO: merge this with Hudson/threadDump.jelly
+-->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <l:layout title="${%title(it.displayName)}">
+    <st:include page="sidepanel.jelly" />
+
+    <l:main-panel>
+      <l:isAdmin>
+        <h1>${%Thread Dump}</h1>
+        <j:forEach var="t" items="${it.getThreadDump().entrySet()}">
+          <h2>${t.key}</h2>
+          <pre>${t.value}</pre>
+        </j:forEach>
+      </l:isAdmin>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

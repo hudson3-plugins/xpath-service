@@ -1,0 +1,31 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi
+#        
+#
+#************************************************************************** --> 
+
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define">
+  <st:documentation>
+    Modifies the 'attrs.field' of the parent to inherit @field from the enclosing &lt;f:entry>
+    if available. Also computes the @checkUrl attribute.
+  </st:documentation>
+  <j:set var="pattrs" value="${parentScope.attrs}" />
+  <j:if test="${pattrs.field==null}">
+    <!-- this looks up the ancestor <entry> set by entry.jelly -->
+    <j:set target="${pattrs}" property="field" value="${entry.field}" />
+  </j:if>
+  <j:set target="${pattrs}" property="checkUrl"
+         value="${h.getCheckUrl(pattrs.checkUrl,descriptor,pattrs.field)}" />
+</j:jelly>

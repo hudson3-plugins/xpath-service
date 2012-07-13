@@ -1,0 +1,30 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2010 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi
+#        
+#
+#************************************************************************** --> 
+
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <!-- view tab bar -->
+  <l:tabBar>
+    <j:forEach var="v" items="${views}">
+      <l:tab name="${v.viewName}" active="${v==currentView}" href="${rootURL}/${v.url}" />
+    </j:forEach>
+    <j:if test="${currentView.hasPermission(currentView.CREATE)}">
+      <l:tab name="+" href="${rootURL}/${currentView.owner.url}newView" active="false"
+             title="${%New View}" />
+    </j:if>
+  </l:tabBar>
+</j:jelly>

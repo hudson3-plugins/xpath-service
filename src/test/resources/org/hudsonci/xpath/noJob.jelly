@@ -1,0 +1,36 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi, Seiji Sogabe
+#        
+#
+#************************************************************************** --> 
+
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core">
+    <style type="text/css">
+        #noJobDiv {
+            padding: 10px;
+            text-align: center;
+            border-width: 0px 1px 1px;
+            border-style: none solid solid;
+            border-color: #BBBBBB;
+        }
+    </style>
+<div id="noJobDiv">
+  ${%description_1}
+  <j:if test="${it.hasPermission(it.CONFIGURE)}">
+      <j:set var="configLink" value="${rootURL}/${it.viewUrl}configure"/>
+      ${%description_2(configLink)}
+  </j:if>
+</div>
+</j:jelly>

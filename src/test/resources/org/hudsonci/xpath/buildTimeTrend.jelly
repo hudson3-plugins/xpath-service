@@ -1,0 +1,75 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2010 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi,
+#        
+#
+#************************************************************************** --> 
+
+
+<!-- Displays the chart that show how long builds are taking -->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+  <l:layout title="${%title(it.displayName)}">
+		<st:include page="sidepanel.jelly" />
+		<l:main-panel>
+      <h1>${%Timeline}</h1>
+      <st:include page="control.jelly" it="${it.timeline}" />
+      <div style="height:2em"/><!-- spacer -->
+
+      <h1>${%Build Time Trend}</h1>
+      <j:choose>
+        <j:when test="${it.builds.size()&gt;1}">
+          <div align="center">
+            <img src="buildTimeGraph/png" width="500" height="400" lazymap="buildTimeGraph/map" alt="[Build time graph]" style="float:right"/>
+          </div>
+
+          <j:set var="isMasterSlaveEnabled" value="${!empty(app.slaves)}"/>
+          <div align="center">
+            <table class="sortable" style="margin-top:1em;">
+              <tr>
+                <th><st:nbsp/></th>
+                <th initialSortDir="up">${%Build}</th>
+                <th>${%Duration}</th>
+                <j:if test="${isMasterSlaveEnabled}">
+                  <th>${%Slave}</th>
+                </j:if>
+              </tr>
+              <j:forEach var="r" items="${it.builds}">
+                <tr>
+                  <td>
+                  	<img width="16" height="16" src="${imagesURL}/16x16/${r.buildStatusUrl}" alt="${r.iconColor.description}" />
+                  </td>
+                  <td data="${r.number}">
+                    <a href="${r.number}">
+                    ${r.displayName}
+                    </a>
+                  </td>
+                  <td data="${r.duration}">
+                    ${r.durationString}
+                  </td>
+                  <j:if test="${isMasterSlaveEnabled}">
+                    <td>
+                      <t:node value="${r.builtOn}"/>
+                    </td>
+                  </j:if>
+                </tr>
+              </j:forEach>
+            </table>
+          </div>
+        </j:when>
+        <j:otherwise>
+          ${%More than 1 builds are needed for the trend report.}
+        </j:otherwise>
+      </j:choose>
+    </l:main-panel>
+	</l:layout>
+</j:jelly>

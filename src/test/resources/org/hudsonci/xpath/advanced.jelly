@@ -1,0 +1,40 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi
+#        
+#
+#************************************************************************** --> 
+
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <st:documentation>
+    Expandable section that shows "advanced..." button by default.
+    Upon clicking it, a section unfolds, and the HTML rendered by the body of this tag
+    appears.
+    <st:attribute name="title">
+        Custom button title.
+    </st:attribute>
+  </st:documentation>
+
+	<tr><td/><td/>
+	  <td>
+	    <div class="advancedLink">
+              <input type="button" value="${attrs.title != null ? attrs.title : 'Advanced...'}" class="advancedButton" />
+	    </div>
+	    <table class="advancedBody"><tbody>
+	    <!-- this is the hidden portion that hosts the "advanced" part. Contents will be moved to the master table when "advanced..." is clicked -->
+	      <d:invokeBody/>
+	    </tbody></table>
+	  </td>
+	</tr>
+</j:jelly>

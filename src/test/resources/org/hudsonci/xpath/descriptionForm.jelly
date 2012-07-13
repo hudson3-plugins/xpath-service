@@ -1,0 +1,34 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi, Eric Lefevre-Ardant
+#        
+#
+#************************************************************************** --> 
+
+
+<!--
+  Used by editableDescription.jelly for loading the edit form.
+-->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:f="/lib/form" xmlns:l="/lib/layout">
+  <j:if test="${it.class.name=='hudson.model.Hudson'}">
+    <j:set var="it" value="${it.primaryView}"/>
+  </j:if>
+  <l:ajax>
+    <form action="submitDescription" method="post">
+      <f:textarea name="description" value="${it.description}" />
+      <div align="right">
+        <f:submit value="${%Submit}" />
+      </div>
+    </form>
+  </l:ajax>
+</j:jelly>

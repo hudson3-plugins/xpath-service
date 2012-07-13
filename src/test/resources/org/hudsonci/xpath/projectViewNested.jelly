@@ -1,0 +1,49 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi
+#        
+#
+#************************************************************************** --> 
+
+
+<!--
+  Renders the nest view in <projectView />
+-->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:x="jelly:xml" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <tr>
+    <td colspan="2">
+      <div style="${indenter.getRelativeShift(job)}">
+        <j:choose>
+          <j:when test="${request.getView(v,'ajaxRows.jelly')==null}">
+            <img src="${imagesURL}/none.gif" state="plus" width="14" height="14" alt="" />
+          </j:when>
+          <j:otherwise>
+            <!-- if nested view supports ajaxRows -->
+            <a href="#">
+              <img src="${imagesURL}/tree/plus.png" state="plus" width="14" height="14" alt="" class="fold-control treeview-fold-control"
+                   url="${rootURL}/${v.url}/ajaxRows?depth=${depth!=null?depth+1:1}"/>
+              <st:adjunct includes="lib.hudson.projectViewNested" />
+            </a>
+          </j:otherwise>
+        </j:choose>
+        <img src="${imagesURL}/${iconSize}/folder.png" style="margin-left:4px" alt="" />
+      </div>
+    </td>
+    <td colspan="5" style="${indenter.getCss(job)}">
+      <a href="${rootURL}/${v.url}">
+        ${v.viewName}
+      </a>
+    </td>
+  </tr>
+</j:jelly>

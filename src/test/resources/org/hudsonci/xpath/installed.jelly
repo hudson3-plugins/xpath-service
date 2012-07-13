@@ -1,0 +1,157 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2010 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi, Seiji Sogabe, Yahoo! Inc.
+#        
+#
+#************************************************************************** --> 
+
+
+<!--
+  Config page
+-->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:s="/lib/form">
+  <l:layout title="Update Center" permission="${app.ADMINISTER}" norefresh="true">
+    <st:include page="sidepanel.jelly"/>
+    <l:main-panel>
+      <local:tabBar page="installed" xmlns:local="/hudson/PluginManager" />
+      <table id="plugins" class="sortable pane bigtable">
+        <j:choose>
+          <j:when test="${empty(app.pluginManager.plugins) and empty(app.pluginManager.failedPlugins)}">
+            <tr><td>
+              ${%No plugins installed.}
+            </td></tr>
+          </j:when>
+          <j:otherwise>
+            <tr style="border-top: 0px;">
+              <th width="32" tooltip="${%Uncheck to disable the plugin}">${%Enabled}</th>
+              <th initialSortDir="down">${%Name}</th>
+              <th width="32">${%Version}</th>
+              <th width="32">${%Previously installed version}</th>
+              <th width="32">${%Pinned}</th>
+            </tr>
+            <j:forEach var="p" items="${app.pluginManager.plugins}">
+              <tr>
+                <j:set var="state" value="${p.enabled?'true':null}"/>
+                <td class="center pane" data="${state}">
+                  <input type="checkbox" checked="${state}" onclick="flip(event)"
+                         url="plugin/${p.shortName}"
+                         original="${p.active?'true':'false'}"/>
+                </td>
+                <td class="pane">
+                  <div>
+                    <a href="${p.url}">
+                      ${p.updateInfo.title?:p.longName}
+                    </a>
+                  </div>
+                  <div class="excerpt">
+                    <j:set var="indexPage" value="${p.indexPage.toString()}" />
+                    <j:if test="${!empty(indexPage)}">
+                      <j:include uri="${indexPage}" />
+                    </j:if>
+                  </div>
+                </td>
+                <td class="center pane" style="white-space:nowrap">
+                  ${p.version}
+                </td>
+                <td>
+                  <j:if test="${p.downgradable}">
+                    <form method="post" action="${rootURL}/updateCenter/plugin/${p.shortName}/downgrade">
+                      <s:submit value="${%downgradeTo(p.backupVersion)}"/>
+                    </form>
+                  </j:if>
+                </td>
+                <td class="center pane" id='unpin-${p.shortName}'>
+                  <j:if test="${p.isPinned()}">
+                    <input type="button" onclick="unpin(this,'${p.shortName}')" value="${%Unpin}" class="yui-button" />
+                    <a href="${%wiki.url}"><img style="vertical-align:top" src="${imagesURL}/16x16/help.png"/></a>
+                  </j:if>
+                </td>
+              </tr>
+            </j:forEach>
+            <!-- failed ones -->
+            <j:forEach var="p" items="${it.pluginManager.failedPlugins}">
+              <tr class="hoverback">
+                <td class="pane" />
+                <td class="pane">
+                  <h4 class="error">Failed : ${p.name}</h4>
+                  <div stlyle="padding-left: 1em">
+                    <pre>${p.exceptionString}</pre>
+                  </div>
+                </td>
+                <td class="pane" />
+              </tr>
+            </j:forEach>
+          </j:otherwise>
+        </j:choose>
+      </table>
+
+      <j:if test="${it.isPluginUploaded()}">
+        <div style="margin: 1em; height: 1em">
+          <div class="error">
+            ${%New plugins will take effect once you restart Hudson}
+            <j:if test="${app.lifecycle.canRestart()}">
+              <s:submit value="${%Restart Once No Jobs Are Running}" />
+            </j:if>
+          </div>
+        </div>
+      </j:if>
+      <div class="warning" id="needRestart" style="display:none; margin: 1em; height: 1em">
+        <form method="post" action="${rootURL}/safeRestart">
+          ${%Changes will take effect when you restart Hudson}
+          <j:if test="${app.lifecycle.canRestart()}">
+            <s:submit value="${%Restart Once No Jobs Are Running}" />
+          </j:if>
+        </form>
+      </div>
+
+
+      <script>
+        <!-- function to toggle the enable/disable state -->
+        function flip(o) {
+          btn = Event.element(o);
+
+          <!-- trigger -->
+          new Ajax.Request(btn.getAttribute('url')+"/make"+(btn.checked?"Enable":"Disable")+"d", {
+            onFailure : function(req,o) {
+              $('needRestart').innerHTML = req.responseText;
+            }
+          });
+
+          updateMsg();
+        }
+
+        function updateMsg() {
+          <!-- is anything changed since its original state? -->
+          var e = $A($('plugins').getElementsByTagName('input')).find(function(e) {
+            return String(e.checked)!=e.getAttribute('original');
+          });
+
+          $('needRestart').style.display = (e!=null?"block":"none");
+        }
+
+        updateMsg(); // set the initial state
+
+        function unpin(button,shortName) {
+          new Ajax.Request("./plugin/"+shortName+"/unpin", {
+            onFailure : function(t) {
+              alert('Failed to unpin:'+t.responseText);
+            },
+            onSuccess : function(t) {
+              $('unpin-'+shortName).innerHTML = "";
+            }
+          });
+        }
+      </script>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

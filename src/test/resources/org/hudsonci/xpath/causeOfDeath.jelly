@@ -1,0 +1,51 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi
+#        
+#
+#************************************************************************** --> 
+
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+  <l:layout title="${it.name}">
+    <l:header />
+    <l:side-panel>
+      <l:tasks>
+        <l:task icon="images/24x24/up.png" href="../.." title="${%Back}" />
+      </l:tasks>
+    </l:side-panel>
+    <l:main-panel>
+      <j:choose>
+        <j:when test="${it.alive}">
+          <h1>
+            <img src="${imagesURL}/48x48/blue.png" width="48" height="48" alt=""/>
+            ${%Thread is still alive}
+          </h1>
+        </j:when>
+        <j:otherwise>
+          <h1>
+            <img src="${imagesURL}/48x48/red.png" width="48" height="48" alt=""/>            
+            ${%Thread has died}
+          </h1>
+          <pre>${h.printThrowable(it.causeOfDeath)}</pre>
+          <pre>
+            <a href="http://wiki.hudson-ci.org/display/HUDSON/Dead+Executor">${%more info}</a>
+          </pre>
+          <form method="post" action="yank" name="yank">
+            <f:submit value="${%Restart this thread}"/>
+          </form>
+        </j:otherwise>
+      </j:choose>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

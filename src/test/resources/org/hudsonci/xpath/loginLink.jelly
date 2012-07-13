@@ -1,0 +1,116 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2010 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Inc., Winston Prakash
+#        
+#
+#************************************************************************** --> 
+
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+  <j:invokeStatic var="fromEncoded" className="java.net.URLEncoder" method="encode">
+
+   <j:arg value="${if (request.session.attribute('from')!=null) request.session.getAttribute('from');  else if (request.getParameter('from')!=null) request.getParameter('from'); else if (request.requestURI=='/loginError' || request.requestURI=='/login') '/'; else request.requestURI;}"/>
+   <j:arg value="UTF-8"/>
+
+  </j:invokeStatic>
+  
+  <j:set var="from" value="${if (request.session.attribute('from')!=null) request.session.getAttribute('from');  else if (request.getParameter('from')!=null) request.getParameter('from'); else if (request.requestURI=='/loginError' || request.requestURI=='/login') '/'; else request.requestURI;}" />
+   
+  
+    <script type="text/javascript">
+        
+        function showLoginDialog(){
+            jQuery.blockUI({
+              message: jQuery('#loginDialog'),
+              css: { 
+                width: '350px'
+              },
+              title:  'Confirmation'
+            });
+            jQuery('j_username').focus();
+        }
+
+        function submitForm(){
+            jQuery('#loginMsg').show();
+            jQuery('#loginError').hide();
+            var dataString = jQuery("#loginForm").serialize();
+            jQuery.ajax({
+              type: 'POST',
+              url: "${rootURL}/${app.securityRealm.authenticationGatewayUrl}",
+              data: dataString,
+              success: function(){
+                window.location.href="${h.jsStringEscape(from)}";
+              },
+              error: function(){
+                jQuery('#loginError').show();
+                jQuery('#loginMsg').hide();
+              },
+              dataType: "html"
+            }); 
+        }
+
+        jQuery(document).ready(function() {
+        
+            jQuery('#j_username').keypress(function(e){
+              if(e.which == 13){
+                submitForm();
+              }
+            });
+            
+            jQuery('#j_password').keypress(function(e){
+              if(e.which == 13){
+                submitForm();
+              }
+            });
+
+
+            jQuery('#loginButton').click(function() {
+                 submitForm();
+            });
+            
+
+            jQuery('#cancelButton').click(function() {
+                jQuery.unblockUI();
+                jQuery('#j_username').attr({value:""});
+                jQuery('#j_password').attr({value:""});
+                jQuery('#loginError').hide();
+                jQuery('#loginMsg').hide();
+                return false;
+            });
+
+        });
+
+    </script>
+
+    <!-- We cannot use ajax in case of container based authentication (LegacySecurityRealm)
+         because of the HTTP Status 400 - Invalid direct reference to form login page -->
+    <j:choose>
+        <j:when test="${app.securityRealm.loginUrl=='loginEntry'}">
+            <a style="color:inherit" href="${rootURL}/${app.securityRealm.loginUrl}?from=${from}">
+                <b>${%login}</b>
+            </a>
+        </j:when>
+        <j:otherwise>
+            <a href="${rootURL}/${app.securityRealm.loginUrl}?from=${fromEncoded}"
+               onclick="showLoginDialog(); return false;">
+                <b>${%login}</b>
+            </a>
+        </j:otherwise>
+    </j:choose>
+
+    <div id="loginDialog" style="display:none; cursor: default">
+        <j:set var="submitFrom" value="${from}" />
+        <st:include page="loginDialog.jelly" />
+    </div>
+
+</j:jelly>

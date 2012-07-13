@@ -1,0 +1,28 @@
+<!-- **************************************************************************
+#
+# Copyright (c) 2010, InfraDNA, Inc.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#   
+#        
+#
+#************************************************************************** --> 
+
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <st:documentation>
+    Invisible &lt;f:entry> type. Useful for adding hidden field values.
+  </st:documentation>
+  <tr style="display:none">
+    <td>
+      <d:invokeBody />
+    </td>
+  </tr>
+</j:jelly>

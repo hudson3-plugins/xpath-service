@@ -1,0 +1,30 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi
+#        
+#
+#************************************************************************** --> 
+
+
+<!--
+  read icon size from a cookie and set it up
+-->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:x="jelly:xml" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <j:set scope="parent" var="iconSize" value="${h.getCookie(request,'iconSize','32x32')}" />
+  <!--
+    balls look smaller than their actual size,
+    so we try not to make the secondary icons look bigger than the icon.
+    we want the user's eyes to go to balls, not the clock.
+  -->
+  <j:set scope="parent" var="subIconSize" value="${iconSize=='32x32'?'24x24':iconSize}"/>
+</j:jelly>

@@ -1,0 +1,47 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2010 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi, Bruce Chapman, Alan Harder
+#        
+#
+#************************************************************************** --> 
+
+
+<!-- Tomcat doesn't like us using the attribute called 'class' -->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <st:documentation>
+    Editable drop-down combo box that supports the data binding and AJAX updates.
+    Your descriptor should have the 'doFillXyzItems' method, which returns a ComboBoxModel
+    representation of the items in your combo box, and your instance field should
+    hold the current value.
+
+    <st:attribute name="clazz">
+      Additional CSS classes that the control gets.
+    </st:attribute>
+    <st:attribute name="field">
+      Used for databinding.
+    </st:attribute>
+  </st:documentation>
+
+  <st:once>
+    <script type="text/javascript" src="${request.contextPath}/scripts/utilities.js"/>
+    <script type="text/javascript" src="${request.contextPath}/scripts/combobox.js"/>
+  </st:once>
+
+  <f:prepareDatabinding/>
+  ${descriptor.calcFillSettings(field,attrs)} <!-- this figures out the 'fillUrl' and 'fillDependsOn' attribute -->
+
+  <m:input xmlns:m="jelly:hudson.util.jelly.MorphTagLibrary" ATTRIBUTES="${attrs}" EXCEPT="field items clazz"
+         autocomplete="off" class="combobox2 settings-input ${attrs.clazz}${attrs.checkUrl!=null ? ' validated' : ''}"
+         name="${attrs.name ?: '_.'+attrs.field}"
+         value="${attrs.value ?: instance[attrs.field]}" />
+</j:jelly>

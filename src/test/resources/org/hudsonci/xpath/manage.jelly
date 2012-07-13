@@ -1,0 +1,131 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2012 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#   Kohsuke Kawaguchi, Seiji Sogabe, Stephen Connolly, Winston Prakash
+#        
+#************************************************************************** --> 
+
+<!--
+  Entrance to the configuration page
+-->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <l:layout title="${%Manage Hudson}" xmlns:local="local" permission="${app.ADMINISTER}">
+        <d:taglib uri="local">
+            <!-- table to show a map -->
+            <d:tag name="feature">
+                <t:summary icon="${icon}"
+                 href="${href}" iconOnly="true">
+                    <div class="link">
+                        <a href="${href}">${title}</a>
+                    </div>
+                    <div style="color:gray; text-decoration:none;">
+                        <d:invokeBody />
+                    </div>
+                </t:summary>
+            </d:tag>
+        </d:taglib>
+
+        <st:include page="sidepanel.jelly" />
+        <l:main-panel>
+            <h1>${%Manage Hudson}</h1>
+            <j:if test="${it.checkURIEncodingEnabled}">
+                <script>
+                    var url='checkURIEncoding';
+                    var params='value=\u57f7\u4e8b';
+                    var checkAjax=new Ajax.Updater(
+                        'message', url,
+                        {
+                            method: 'get', parameters: params
+                        }
+                    );
+                </script>
+                <span id="message"></span>
+            </j:if>
+
+            <j:forEach var="am" items="${app.administrativeMonitors}">
+                <j:if test="${am.isActivated() and am.isEnabled()}">
+                    <st:include page="message.jelly" it="${am}" />
+                </j:if>
+            </j:forEach>
+
+            <st:include page="downgrade.jelly" />
+
+            <table style="padding-left: 2em;" id="management-links">
+                
+                <local:feature icon="secure.png" href="securityManager"    title="${%Configure Security}">
+                    ${%Configure Authentication and Authorization Stretegy for Hudson Security.}
+                </local:feature>
+                
+                <local:feature icon="setting.png" href="configure" title="${%Configure System}">
+                    ${%Configure global settings and paths.}
+                </local:feature>
+                
+                <local:feature icon="refresh.png" href="reload" title="${%Reload Configuration from Disk}">
+                    ${%Discard all the loaded data in memory and reload everything from file system.}
+                    ${%Useful when you modified config files directly on disk.}
+                </local:feature>
+                
+                <local:feature icon="plugin.png" href="pluginManager/" title="${%Manage Plugins}">
+                    ${%Add, remove, disable or enable plugins that can extend the functionality of Hudson.}
+                    <j:if test="${it.updateCenter.hasUpdates()}">
+                        <span style="color:red; font-weight:bold">(${%updates available})</span>
+                    </j:if>
+                </local:feature>
+                
+                <local:feature icon="computer.png" href="systemInfo" title="${%System Information}">
+                    ${%Displays various environmental information to assist trouble-shooting.}
+                </local:feature>
+                
+                <local:feature icon="clipboard.png" href="log" title="${%System Log}">
+                    ${%SystemLogText}
+                </local:feature>
+                
+                <local:feature icon="monitor.png" href="load-statistics" title="${%Load Statistics}">
+                    ${%LoadStatisticsText}
+                </local:feature>
+                
+                <local:feature icon="terminal.png" href="cli" title="${%Hudson CLI}">
+                    ${%HudsonCliText}
+                </local:feature>
+                
+                <local:feature icon="notepad.png" href="script" title="${%Script Console}">
+                    ${%Executes arbitrary script for administration/trouble-shooting/diagnostics.}
+                </local:feature>
+                
+                <local:feature icon="network.png" href="computer/" title="${%Manage Nodes}">
+                    ${%Add, remove, control and monitor the various nodes that Hudson runs jobs on.}
+                </local:feature>
+                
+                <!-- TODO: replace all the hard-coded ones with the standard extension point -->
+                <j:forEach var="m" items="${it.managementLinks}">
+                    <j:if test="${m.iconFileName!=null}">
+                        <local:feature icon="${m.iconFileName}" href="${m.urlName}" title="${m.displayName}">
+                            <j:out value="${m.description}"/>
+                        </local:feature>
+                    </j:if>
+                </j:forEach>
+
+                <j:choose>
+                    <j:when test="${it.quietingDown}">
+                        <local:feature icon="system-log-out.png" href="cancelQuietDown" title="${%Cancel Shutdown}"/>
+                    </j:when>
+                    <j:otherwise>
+                        <local:feature icon="system-log-out.png" href="quietDown" title="${%Prepare for Shutdown}">
+                            ${%Stops executing new builds, so that the system can be eventually shut down safely.}
+                        </local:feature>
+                    </j:otherwise>
+                </j:choose>
+                
+            </table>
+        </l:main-panel>
+    </l:layout>
+</j:jelly>

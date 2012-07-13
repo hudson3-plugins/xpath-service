@@ -1,0 +1,66 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2010 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi
+#        
+#
+#************************************************************************** --> 
+
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <l:layout norefresh="true">
+    <l:hasPermission permission="${app.READ}">
+      <st:include page="sidepanel.jelly" />
+    </l:hasPermission>
+    <l:main-panel>
+      <div style="margin: 2em;">
+        <!-- login form -->
+        <form name="login" action="${rootURL}/${it.securityRealm.authenticationGatewayUrl}" method="post" style="text-size:smaller">
+          <table>
+            <tr>
+              <td>${%User}:</td>
+              <td><input type="text" name="j_username" id="j_username" /></td>
+            </tr>
+            <tr>
+              <td>${%Password}:</td>
+              <td><input type="password" name="j_password" /></td>
+            </tr>
+            <j:if test="${app.security.name()=='SECURED'}">
+              <!-- remember me service only available for Spring Security -->
+              <tr>
+                <td align="right"><input id="remember_me" type="checkbox" name="remember_me" /></td>
+                <td><label for="remember_me">${%Remember me on this computer}</label></td>
+              </tr>
+            </j:if>
+          </table>
+          <input type="hidden" name="from" value="${request.getParameter('from')}" />
+          <f:submit value="${%login}" />
+          <script>
+            $('j_username').focus();
+          </script>
+        </form>
+
+        <j:forEach var="fls" items="${it.getFederatedLoginServices()}">
+          <div>
+            <st:include page="loginFragment.jelly" it="${fls}"/>
+          </div>
+        </j:forEach>
+
+        <j:if test="${it.securityRealm.allowsSignup()}">
+          <div style="margin-top:2em">
+            ${%signUp}
+          </div>
+        </j:if>
+      </div>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>
