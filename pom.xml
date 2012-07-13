@@ -3,7 +3,7 @@
   <groupId>org.hudsonci.xpath</groupId>
   <artifactId>xpath-service</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0</version>
+  <version>1.0.1-SNAPSHOT</version>
   <name>xpath-service</name>
   <url>http://maven.apache.org</url>
   
