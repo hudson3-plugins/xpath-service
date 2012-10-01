@@ -17,6 +17,7 @@ package org.hudsonci.xpath.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.WeakHashMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -96,7 +97,55 @@ public class Dom2Dom {
    * @return the dom4j node that was mapped by dom2dom to the argument node
    */
   public Node getOriginalNode(org.w3c.dom.Node node) {
-    return reverseMap.get(node);
+    Node d4jNode = reverseMap.get(node);
+    if (d4jNode == null) {
+      // Xerces is playing tricks, allocating nodes on the fly.
+      SimplePath path = getPathForNode(node, null);
+      Document doc = getDom4jDocument(node);
+      d4jNode = getNodeForPath(doc, path);
+    }
+    return d4jNode;
+  }
+  
+  private Document getDom4jDocument(org.w3c.dom.Node node) {
+    org.w3c.dom.Document doc = node.getOwnerDocument();
+    Document document = (Document) reverseMap.get(doc);
+    if (document == null)
+      throw new IllegalStateException("Document not found in reverse map");
+    return document;
+  }
+  
+  private static class SimplePath {
+    int childNum;
+    SimplePath next;
+    SimplePath(int childNum, SimplePath next) {
+      this.childNum = childNum;
+      this.next = next;
+    }
+  }
+  
+  private SimplePath getPathForNode(org.w3c.dom.Node node, SimplePath next) {
+    if (node instanceof org.w3c.dom.Document)
+      return next;
+    org.w3c.dom.Node parent = node.getParentNode();
+    int i = 0;
+    for (org.w3c.dom.Node child = parent.getFirstChild(); child != null; child = child.getNextSibling()) {
+      if (child.equals(node))
+        return getPathForNode(parent, new SimplePath(i, next));
+      i++;
+    }
+    throw new IllegalStateException("Node not a child of its parent");
+  }
+  
+  private Node getNodeForPath(Document doc, SimplePath path) {
+    Node node = doc;
+    for (SimplePath p = path; p != null; p = p.next) {
+      if (!(node instanceof Branch))
+        throw new IllegalStateException("Node with children not a Branch");
+      Branch parent = (Branch) node;
+      node = parent.node(p.childNum);
+    }
+    return node;
   }
   
   /**
@@ -114,6 +163,32 @@ public class Dom2Dom {
    * @return W3C DOM Node corresponding to node argument
    * @throws XPathException 
    */
+  public org.w3c.dom.Node dom2DomX(Node node, boolean trim) throws XPathException {
+    
+    trimText = trim;
+    
+    // The first time we see a context node we create a w3c Document
+    // for XPath processing. The important thing is that equals
+    // works correctly.
+    
+    Document ddoc = node.getDocument();
+    
+    reverseMap = new ReverseMap();
+
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder builder;
+    try {
+      builder = factory.newDocumentBuilder();
+    } catch (ParserConfigurationException ex) {
+      throw new XPathException(ex);
+    }
+    wdoc = builder.newDocument();
+
+    createChildren(ddoc, wdoc);
+        
+    return findNode(wdoc, node);
+  }
+  
   public org.w3c.dom.Node dom2Dom(Node node, boolean trim) throws XPathException {
     
     trimText = trim;
@@ -121,6 +196,14 @@ public class Dom2Dom {
     // The first time we see a context node we create a w3c Document
     // for XPath processing. The important thing is that equals
     // works correctly.
+    
+    // This cache is probably bogus because Xerces likes to create Nodes
+    // as flyweight objects on the fly. So different operations might
+    // retrieve the same actual Node in two different NodeImpl objects
+    // that do not compare equals.
+    //
+    // It did seem to work for some simple tests and when it does work
+    // it is fast, but I've worked around it in getOriginalNode.
     
     Document ddoc = node.getDocument();
     DocMapPair pair = cache.get(ddoc);
@@ -147,7 +230,8 @@ public class Dom2Dom {
     wdoc = pair.getLeft();
     reverseMap = pair.getRight();
     
-    createChildren(ddoc, wdoc);
+    if (!wdoc.hasChildNodes())
+      createChildren(ddoc, wdoc);
         
     return findNode(wdoc, node);
   }

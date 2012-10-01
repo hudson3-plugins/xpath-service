@@ -294,6 +294,8 @@ public class XPathJavaImpl implements XPathAPI {
     } catch (XPathExpressionException ex) {
       throw new XPathException(ex);
     }
+    if (obj instanceof Node)
+      return unmap((Node)obj);
     if (obj instanceof NodeList) {
       NodeList nodeList = (NodeList) obj;
       if (nodeList.getLength() == 0)
@@ -320,6 +322,8 @@ public class XPathJavaImpl implements XPathAPI {
     } catch (XPathExpressionException ex) {
       throw new XPathException(ex);
     }
+    if (obj instanceof Node)
+      return makeList((Node) obj);
     if (obj instanceof NodeList)
       return makeList((NodeList) obj);
     else
@@ -331,6 +335,13 @@ public class XPathJavaImpl implements XPathAPI {
       for (int i = 0, n = nodeList.getLength(); i < n; i++)
         nodes.add(unmap(nodeList.item(i)));
       return nodes;
+  }
+  
+  private List makeList(Node node) {
+      org.dom4j.Node d4jNode = unmap((Node) node);
+      ArrayList<org.dom4j.Node> list = new ArrayList<org.dom4j.Node>();
+      list.add(d4jNode);
+      return list;
   }
   
   /**

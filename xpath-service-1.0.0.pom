@@ -3,7 +3,7 @@
   <groupId>org.hudsonci.xpath</groupId>
   <artifactId>xpath-service</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.0</version>
   <name>xpath-service</name>
   <url>http://hudson-ci.org/</url>
   <description>XPath Service for Jelly</description>
@@ -16,10 +16,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jvnet.hudson.dom4j</groupId>
+      <groupId>dom4j</groupId>
       <artifactId>dom4j</artifactId>
-      <version>1.6.1-hudson-3</version>
-      <optional>true</optional>
+      <version>1.6.1</version>
     </dependency>
   </dependencies>
   

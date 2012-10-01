@@ -28,17 +28,16 @@ public class XPath implements XPathAPI {
   
   XPathAPI impl;
   
-  private static ServiceLoader<XPathAPI> xpathLoader = ServiceLoader.load(XPathAPI.class);
+  private static XPathAPIFactory factory = null;
   
-  private XPathAPI getXPath() {
-    for (XPathAPI api : xpathLoader)
-      return api;
-    return null;
+  public static void provideXPathService(XPathAPIFactory factory) {
+    XPath.factory = factory;
   }
   
   public XPath(String expr) throws XPathException {
     
-    impl = getXPath();
+    if (factory != null)
+      impl = factory.newXPathAPI(expr);
     
     // If no service provider, fall back on default implementation
     // NB: If the default implementation was robust, we wouldn't

@@ -28,17 +28,15 @@ public class Stylesheet implements StylesheetAPI {
 
   StylesheetAPI impl;
   
-  private static ServiceLoader<StylesheetAPI> stylesheetLoader = ServiceLoader.load(StylesheetAPI.class);
+  private static StylesheetAPIFactory factory = null;
   
-  private StylesheetAPI getStylesheet() {
-    for (StylesheetAPI api : stylesheetLoader) {
-      return api;
-    }
-    return null;
+  public static void provideStylesheetService(StylesheetAPIFactory factory) {
+    Stylesheet.factory = factory;
   }
   
   public Stylesheet() {
-    impl = getStylesheet();
+    if (factory != null)
+      impl = factory.newStylesheetAPI();
     
     // If no service provider (yet) use the default implementation.
     // NB: the default implementation does NOT work.

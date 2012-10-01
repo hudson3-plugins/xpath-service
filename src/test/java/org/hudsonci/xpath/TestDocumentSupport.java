@@ -69,6 +69,8 @@ public class TestDocumentSupport extends TestCase {
         fail(e.toString());
       } catch (IOException e) {
         fail(e.toString());
+      } finally {
+        try { in.close(); } catch (Exception e) {;}
       }
     return null;
   }
@@ -84,6 +86,8 @@ public class TestDocumentSupport extends TestCase {
       doc = reader.read(in);
     } catch (DocumentException e) {
       fail("Can't read "+resourceName+" "+e);
+    } finally {
+      try { in.close(); } catch (Exception e) {;}
     }
     
     return doc;
