@@ -19,6 +19,7 @@ import org.hudsonci.xpath.XPathAPI;
 import org.hudsonci.xpath.XNamespaceContext;
 import org.hudsonci.xpath.XVariableContext;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.xpath.*;
@@ -302,7 +303,7 @@ public class XPathJavaImpl implements XPathAPI {
         throw new XPathException("returned empty NodeList");
       return unmap(nodeList.item(0));
     } else
-      throw new XPathException("result not a node, returned "+obj.getClass().getName());
+      throw new XPathException("result not a node, returned "+(obj == null ? "null" : obj.getClass().getName()));
   }
   
   /**
@@ -318,7 +319,7 @@ public class XPathJavaImpl implements XPathAPI {
     XPathExpression xexpr = getXPathExpression();
     Object obj;
     try {
-      obj = xexpr.evaluate(context, XPathConstants.NODE);
+      obj = xexpr.evaluate(context, XPathConstants.NODESET);
     } catch (XPathExpressionException ex) {
       throw new XPathException(ex);
     }
@@ -326,6 +327,8 @@ public class XPathJavaImpl implements XPathAPI {
       return makeList((Node) obj);
     if (obj instanceof NodeList)
       return makeList((NodeList) obj);
+    else if (obj == null)
+      return Collections.EMPTY_LIST;
     else
       throw new XPathException("result not a node list, returned "+obj.getClass().getName());
   }
