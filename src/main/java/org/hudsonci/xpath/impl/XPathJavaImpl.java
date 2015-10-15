@@ -21,8 +21,10 @@ import org.hudsonci.xpath.XVariableContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.xpath.*;
+import org.hudsonci.xpath.XFunctionFilter;
 import org.hudsonci.xpath.XPathException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -39,10 +41,22 @@ public class XPathJavaImpl implements XPathAPI {
   javax.xml.xpath.XPath xpath;
   XVariableContext varContext;
   XNamespaceContext nsContext;
+  XFunctionFilter funFilter;
   XPathExpression xpathExpr;
+  
+  private static final Logger LOGGER = Logger.getLogger(XPathJavaImpl.class.getName());
   
   public XPathJavaImpl(String expr) {
     this.expr = expr;
+  }
+
+  public void setFunctionFilter(XFunctionFilter filter) {
+    LOGGER.warning("xpath-provider plugin required for function filter");
+    funFilter = filter;
+  }
+
+  public XFunctionFilter getFunctionFilter() {
+    return funFilter;
   }
   
   private class VarResolver implements XPathVariableResolver {

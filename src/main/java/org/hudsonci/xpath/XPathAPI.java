@@ -35,6 +35,10 @@ public interface XPathAPI {
   
   public XNamespaceContext getNamespaceContext();
   
+  public void setFunctionFilter(XFunctionFilter filter);
+  
+  public XFunctionFilter getFunctionFilter();
+  
   public Object evaluate(Object xpathContext) throws XPathException;
   
   public boolean booleanValueOf(Object xpathContext) throws XPathException;

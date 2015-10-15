@@ -97,4 +97,12 @@ public class XPath implements XPathAPI {
   public void setExpr(String expr) {
     impl.setExpr(expr);
   }
+
+  public void setFunctionFilter(XFunctionFilter filter) {
+    impl.setFunctionFilter(filter);
+  }
+
+  public XFunctionFilter getFunctionFilter() {
+    return impl.getFunctionFilter();
+  }
 }
